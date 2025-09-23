@@ -1,6 +1,9 @@
 "use client";
 
+import { CalendarIcon, MapPinIcon, RotateCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import type { TooltipData } from "@/types/argo";
 
 interface FloatTooltipProps {
@@ -34,17 +37,11 @@ export default function FloatTooltip({
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date
-        .toLocaleString("en-US", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: false,
-        })
-        .replace(",", "");
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      });
     } catch {
       return dateString;
     }
@@ -52,9 +49,9 @@ export default function FloatTooltip({
 
   // Calculate tooltip position to avoid going off screen
   const getTooltipStyle = () => {
-    const tooltipWidth = 280;
-    const tooltipHeight = 120;
-    const padding = 10;
+    const tooltipWidth = 260;
+    const tooltipHeight = 110;
+    const padding = 12;
 
     let left = position.x + 15;
     let top = position.y - tooltipHeight / 2;
@@ -87,53 +84,45 @@ export default function FloatTooltip({
       className="fixed z-50 pointer-events-none transition-all duration-200 ease-out"
       style={getTooltipStyle()}
     >
-      <div className="bg-gray-900 text-white rounded-lg shadow-xl border border-gray-700 p-3 min-w-[280px]">
-        {/* Header with ID */}
-        <div className="font-semibold text-blue-300 text-sm mb-2 border-b border-gray-700 pb-1">
-          ID: {data.id}
-        </div>
-
-        {/* Coordinates */}
-        <div className="space-y-1 text-xs">
-          <div className="flex justify-between">
-            <span className="text-gray-300">Long / Lat:</span>
-            <span className="font-mono text-white">
-              {data.longitude.toFixed(1)} / {data.latitude.toFixed(1)}
-            </span>
+      <Card className="shadow-lg border backdrop-blur-sm bg-background/95">
+        <CardContent className="p-3 space-y-2">
+          {/* Header with ID */}
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-xs font-medium">
+              ID: {data.id}
+            </Badge>
           </div>
 
-          {/* Date */}
-          <div className="flex justify-between">
-            <span className="text-gray-300">Date:</span>
-            <span className="font-mono text-white text-xs">
-              {formatDate(data.date)}
-            </span>
-          </div>
+          {/* Information Grid */}
+          <div className="space-y-1.5 text-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <MapPinIcon className="h-3 w-3" />
+                <span>Position</span>
+              </div>
+              <span className="font-mono text-foreground">
+                {data.longitude.toFixed(1)}°, {data.latitude.toFixed(1)}°
+              </span>
+            </div>
 
-          {/* Cycle */}
-          <div className="flex justify-between">
-            <span className="text-gray-300">Cycle:</span>
-            <span className="font-mono text-white">{data.cycle}</span>
-          </div>
-        </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <CalendarIcon className="h-3 w-3" />
+                <span>Date</span>
+              </div>
+              <span className="text-foreground">{formatDate(data.date)}</span>
+            </div>
 
-        {/* Small arrow pointing to the float */}
-        <div
-          className="absolute w-0 h-0 border-solid"
-          style={{
-            left:
-              position.x < window.innerWidth / 2 ? "-6px" : "calc(100% - 6px)",
-            top: "50%",
-            transform: "translateY(-50%)",
-            borderTop: "6px solid transparent",
-            borderBottom: "6px solid transparent",
-            borderLeft:
-              position.x < window.innerWidth / 2 ? "none" : "6px solid #1f2937",
-            borderRight:
-              position.x < window.innerWidth / 2 ? "6px solid #1f2937" : "none",
-          }}
-        />
-      </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <RotateCcwIcon className="h-3 w-3" />
+                <span>Cycle</span>
+              </div>
+              <span className="text-foreground">{data.cycle}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

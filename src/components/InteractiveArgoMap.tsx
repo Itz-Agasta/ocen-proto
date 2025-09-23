@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   FullscreenControl,
@@ -66,7 +67,15 @@ function ArgoMarker({
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onClick(e.nativeEvent);
+          // For keyboard events, just call the click handler with a simulated mouse event
+          const rect = e.currentTarget.getBoundingClientRect();
+          const simulatedEvent = new MouseEvent("click", {
+            clientX: rect.left + rect.width / 2,
+            clientY: rect.top + rect.height / 2,
+            bubbles: true,
+            cancelable: true,
+          });
+          onClick(simulatedEvent);
         }
       }}
       aria-label={`Argo float ${float.id} at ${float.latitude}, ${float.longitude}`}
@@ -103,6 +112,7 @@ function ArgoMarker({
 export default function InteractiveArgoMap({
   floats = argoFloatsData,
 }: InteractiveArgoMapProps) {
+  const router = useRouter();
   const [selectedFloat, setSelectedFloat] = useState<ArgoFloat | null>(null);
   const [hoveredFloat, setHoveredFloat] = useState<ArgoFloat | null>(null);
   const [showProfile, setShowProfile] = useState(false);
@@ -148,9 +158,12 @@ export default function InteractiveArgoMap({
   };
 
   const handleShowProfile = () => {
+    if (selectedFloat) {
+      // Navigate to the float profile page
+      router.push(`/float/${selectedFloat.floatNumber}`);
+    }
     setSelectedFloat(null);
     setClickPosition(null);
-    setShowProfile(true);
   };
 
   const handleClosePopup = () => {

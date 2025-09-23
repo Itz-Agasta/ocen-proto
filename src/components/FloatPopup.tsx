@@ -1,5 +1,10 @@
 "use client";
 
+import { CalendarIcon, MapPinIcon, User2Icon, WifiIcon, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import type { PopupData } from "@/types/argo";
 
 interface InlineFloatPopupProps {
@@ -25,26 +30,18 @@ export default function FloatPopup({
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return (
-        date.toLocaleDateString("en-US", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }) +
-        " " +
-        date.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        })
-      );
+      return date.toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
     } catch {
       return dateString;
     }
   };
 
   const handleActionClick = (action: string) => {
-    if (action === "Show Profile Data" && onShowProfile) {
+    if (action === "Profile" && onShowProfile) {
       onShowProfile();
     } else {
       console.log(`Action clicked: ${action} for float ${data.floatNumber}`);
@@ -55,8 +52,8 @@ export default function FloatPopup({
   // Calculate position to keep popup on screen
   const getPopupStyle = () => {
     const popupWidth = 320;
-    const popupHeight = 350; // Increased for 3 buttons
-    const padding = 20;
+    const popupHeight = 280;
+    const padding = 16;
 
     let left = position.x + 10;
     let top = position.y - popupHeight / 2;
@@ -79,113 +76,93 @@ export default function FloatPopup({
     return {
       left: `${Math.max(padding, left)}px`,
       top: `${Math.max(padding, top)}px`,
+      width: `${popupWidth}px`,
     };
   };
 
   return (
-    <div
-      className="fixed z-50 bg-slate-50 bg-opacity-95 backdrop-blur-sm rounded-xl shadow-2xl border border-slate-200/50 animate-in fade-in zoom-in duration-200"
+    <Card
+      className="fixed z-50 shadow-lg border animate-in fade-in zoom-in duration-200"
       style={getPopupStyle()}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-slate-200/50">
-        <h3 className="text-sm font-bold text-slate-800">
-          Float {data.floatNumber} - Cycle {data.cycle}
-        </h3>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-full hover:bg-slate-200/50"
-          aria-label="Close popup"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-base leading-none">
+              Float {data.floatNumber}
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Cycle {data.cycle}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="h-8 w-8 p-0"
           >
-            <title>Close</title>
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </Button>
+        </div>
+      </CardHeader>
 
-      {/* Content */}
-      <div className="p-4 space-y-3 max-w-xs">
-        {/* Basic Information */}
+      <CardContent className="space-y-4">
+        {/* Date and Platform Info */}
         <div className="space-y-2">
-          <div className="flex justify-between text-xs">
-            <span className="text-slate-600 font-medium">Date:</span>
-            <span className="text-slate-800 font-mono">
-              {formatDate(data.date)}
-            </span>
+          <div className="flex items-center gap-2 text-sm">
+            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+            <span className="font-medium">{formatDate(data.date)}</span>
           </div>
-          <div className="flex justify-between text-xs">
-            <span className="text-slate-600 font-medium">Platform:</span>
-            <span className="text-slate-800">{data.platformType}</span>
+          <div className="flex items-center gap-2 text-sm">
+            <MapPinIcon className="h-4 w-4 text-muted-foreground" />
+            <span>{data.platformType}</span>
           </div>
-          <div className="flex justify-between text-xs">
-            <span className="text-slate-600 font-medium">PI:</span>
-            <span className="text-slate-800">{data.pi}</span>
+          <div className="flex items-center gap-2 text-sm">
+            <User2Icon className="h-4 w-4 text-muted-foreground" />
+            <span>{data.pi}</span>
           </div>
-          <div className="flex justify-between text-xs">
-            <span className="text-slate-600 font-medium">Telecom:</span>
-            <span className="text-slate-800">{data.telecomCode}</span>
+          <div className="flex items-center gap-2 text-sm">
+            <WifiIcon className="h-4 w-4 text-muted-foreground" />
+            <span>{data.telecomCode}</span>
           </div>
         </div>
 
+        <Separator />
+
         {/* Sensors */}
         <div>
-          <div className="text-xs font-medium text-slate-700 mb-2">
-            Sensors:
-          </div>
+          <p className="text-sm font-medium mb-2">Sensors</p>
           <div className="flex flex-wrap gap-1">
             {data.sensors.map((sensor) => (
-              <span
-                key={sensor}
-                className="inline-block px-2 py-1 text-xs bg-gradient-to-r from-cyan-100 to-blue-100 text-cyan-800 rounded-md border border-cyan-200"
-              >
+              <Badge key={sensor} variant="secondary" className="text-xs">
                 {sensor}
-              </span>
+              </Badge>
             ))}
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="pt-2 border-t border-slate-200/50">
-          <div className="text-xs font-medium text-slate-700 mb-2">
-            Actions:
-          </div>
-          <div className="space-y-2">
-            <button
-              type="button"
-              onClick={() => handleActionClick("Show Profile Data")}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors duration-200 text-xs"
-            >
-              Show Profile Data
-            </button>
-            <button
-              type="button"
-              onClick={() => handleActionClick("Show Float Trajectory")}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors duration-200 text-xs"
-            >
-              Show Float Trajectory
-            </button>
-            <button
-              type="button"
-              onClick={() => handleActionClick("Go to Float Page")}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-3 rounded-lg transition-colors duration-200 text-xs"
-            >
-              Go to Float Page
-            </button>
-          </div>
+        <Separator />
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          <Button
+            onClick={() => handleActionClick("Profile")}
+            className="flex-1"
+            size="sm"
+          >
+            Profile
+          </Button>
+          <Button
+            onClick={() => handleActionClick("Trajectory")}
+            variant="outline"
+            className="flex-1"
+            size="sm"
+          >
+            Trajectory
+          </Button>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
