@@ -17,13 +17,13 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { argoFloatsData } from "@/data/argoFloats";
 import type { ArgoFloat, PopupData, TooltipData } from "@/types/argo";
+import Starfield from "../ui/Starfield";
 import FloatPopup from "./FloatPopup";
 import FloatTooltip from "./FloatTooltip";
 import MapControlPanel, { MAP_STYLES } from "./MapControlPanel";
-import Starfield from "./ui/Starfield";
 
 // Dynamically import ArgoVisualizer to avoid SSR issues with Plotly.js
-const ArgoVisualizer = dynamic(() => import("./argo"), {
+const ArgoVisualizer = dynamic(() => import("../argo"), {
   ssr: false,
   loading: () => (
     <div className="bg-white/95 rounded-xl shadow-lg p-3 min-w-[320px] max-w-[380px] relative">

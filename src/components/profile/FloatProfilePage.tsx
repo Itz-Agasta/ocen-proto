@@ -2,13 +2,13 @@
 
 import { MessageSquare, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { AIInsights } from "@/components/AIInsights";
 import ChatInterface from "@/components/ChatInterface";
-import { DataDownload } from "@/components/DataDownload";
-import { FloatSidebar } from "@/components/FloatSidebar";
-import { MultiParameterProfile } from "@/components/graphs/MultiParameterProfile";
-import { OceanographicProfile } from "@/components/graphs/OceanographicProfile";
-import { TemperatureSalinityDiagram } from "@/components/graphs/TemperatureSalinityDiagram";
+import { AIInsights } from "@/components/profile/AIInsights";
+import { DataDownload } from "@/components/profile/DataDownload";
+import { FloatSidebar } from "@/components/profile/FloatSidebar";
+import { MultiParameterProfile } from "@/components/profile/graphs/MultiParameterProfile";
+import { OceanographicProfile } from "@/components/profile/graphs/OceanographicProfile";
+import { TemperatureSalinityDiagram } from "@/components/profile/graphs/TemperatureSalinityDiagram";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

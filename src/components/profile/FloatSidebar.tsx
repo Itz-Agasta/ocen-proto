@@ -7,7 +7,7 @@ import {
   FaDatabase,
   FaMapMarkerAlt,
 } from "react-icons/fa";
-import { MiniMap } from "@/components/MiniMap";
+import { MiniMap } from "@/components/profile/MiniMap";
 import { TimePeriodSelector } from "@/components/TimePeriodSelector";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
