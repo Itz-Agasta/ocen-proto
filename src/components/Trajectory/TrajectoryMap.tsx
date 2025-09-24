@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { FloatTrajectory } from "@/data/mockTrajectoryData";
 import TrajectoryDashboard from "./TrajectoryDashboard";
 import TrajectoryPointHover from "./TrajectoryPointHover";
@@ -32,6 +32,12 @@ const Tooltip = dynamic(
   { ssr: false },
 );
 
+// Dynamically import the animated component
+const AnimatedTrajectory = dynamic(() => import("./AnimatedTrajectory"), {
+  ssr: false,
+  loading: () => null,
+});
+
 // Custom numbered marker icon
 const createNumberedIcon = (
   number: number,
@@ -61,6 +67,9 @@ const createNumberedIcon = (
 };
 
 export default function TrajectoryMap({ trajectory }: TrajectoryMapProps) {
+  const [showStaticLine, setShowStaticLine] = useState(false);
+  const [animationCompleted, setAnimationCompleted] = useState(false);
+
   // Calculate map bounds
   const bounds =
     trajectory.points.length > 0
@@ -90,6 +99,11 @@ export default function TrajectoryMap({ trajectory }: TrajectoryMapProps) {
   const trajectoryPath = trajectory.points.map(
     (point) => [point.latitude, point.longitude] as [number, number],
   );
+
+  const handleAnimationComplete = () => {
+    setAnimationCompleted(true);
+    setShowStaticLine(true);
+  };
 
   useEffect(() => {
     // Fix for default markers
@@ -132,8 +146,20 @@ export default function TrajectoryMap({ trajectory }: TrajectoryMapProps) {
             attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
           />
 
-          {/* Trajectory Line */}
-          {trajectoryPath.length > 1 && (
+          {/* Animated Trajectory Line */}
+          {trajectory.points.length > 1 && !animationCompleted && (
+            <AnimatedTrajectory
+              points={trajectory.points}
+              animationDuration={7000}
+              strokeColor="#3b82f6"
+              strokeWidth={3}
+              showProgressMarkers={true}
+              onAnimationComplete={handleAnimationComplete}
+            />
+          )}
+
+          {/* Static Trajectory Line (shown after animation) */}
+          {trajectoryPath.length > 1 && showStaticLine && (
             <Polyline
               positions={trajectoryPath}
               color="#3b82f6"
@@ -142,34 +168,35 @@ export default function TrajectoryMap({ trajectory }: TrajectoryMapProps) {
             />
           )}
 
-          {/* Numbered Trajectory Markers */}
-          {trajectory.points.map((point, index) => {
-            const pointNumber = index + 1;
-            const isStart = index === 0;
-            const isEnd = index === trajectory.points.length - 1;
-            const icon = createNumberedIcon(pointNumber, isStart, isEnd);
+          {/* Numbered Trajectory Markers - only shown after animation */}
+          {animationCompleted &&
+            trajectory.points.map((point, index) => {
+              const pointNumber = index + 1;
+              const isStart = index === 0;
+              const isEnd = index === trajectory.points.length - 1;
+              const icon = createNumberedIcon(pointNumber, isStart, isEnd);
 
-            if (!icon) return null;
+              if (!icon) return null;
 
-            return (
-              <Marker
-                key={`point-${point.timestamp}-${index}`}
-                position={[point.latitude, point.longitude]}
-                icon={icon}
-              >
-                <Tooltip direction="left" offset={[10, 0]} opacity={1}>
-                  <div className="p-0">
-                    <TrajectoryPointHover
-                      point={point}
-                      pointNumber={pointNumber}
-                      isStart={isStart}
-                      isEnd={isEnd}
-                    />
-                  </div>
-                </Tooltip>
-              </Marker>
-            );
-          })}
+              return (
+                <Marker
+                  key={`point-${point.timestamp}-${index}`}
+                  position={[point.latitude, point.longitude]}
+                  icon={icon}
+                >
+                  <Tooltip direction="left" offset={[10, 0]} opacity={1}>
+                    <div className="p-0">
+                      <TrajectoryPointHover
+                        point={point}
+                        pointNumber={pointNumber}
+                        isStart={isStart}
+                        isEnd={isEnd}
+                      />
+                    </div>
+                  </Tooltip>
+                </Marker>
+              );
+            })}
         </MapContainer>
       </div>
     </div>
