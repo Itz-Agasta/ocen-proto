@@ -4,14 +4,18 @@ import {
   Activity,
   BarChart3,
   Bot,
+  Cpu,
   Database,
   FileText,
+  Layers,
   MapPin,
   Menu,
+  ShieldCheck,
   TrendingUp,
   Users,
   Waves,
   X,
+  Zap,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,6 +31,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+
 import { cn } from "@/lib/utils";
 
 interface Navbar2Props {
@@ -87,13 +92,38 @@ const analysisTools = [
     description: "Export data in various formats for further analysis",
     icon: <Database className="h-4 w-4" />,
   },
+  {
+    title: "Scenario Sandbox",
+    href: "/tools/forecasting",
+    description: "Run ‘what-if’ scenarios on ocean profiles.",
+    icon: <Zap className="h-4 w-4" />,
+  },
+  {
+    title: "Gap Filling & Synthesis",
+    href: "/tools/gap-filling",
+    description: "Generate plausible profiles to fill missing measurements",
+    icon: <Cpu className="h-4 w-4" />,
+  },
+  {
+    title: "Anomaly Detection & QC",
+    href: "/tools/anomaly-detection",
+    description: "Automated anomaly detection and quality control",
+    icon: <ShieldCheck className="h-4 w-4" />,
+  },
+  {
+    title: "Clustering & EOF Analysis",
+    href: "/tools/clustering",
+    description:
+      "Advanced clustering techniques and empirical orthogonal function analysis",
+    icon: <Layers className="h-4 w-4" />,
+  },
 ];
 
-export function Navbar2({ onOpenChat }: Navbar2Props) {
+export function HomeNavbar({ onOpenChat }: Navbar2Props) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 w-full border-b bg-background backdrop-blur-sm">
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
         {/* Left Column: Logo + Brand */}
         <div className="flex items-center space-x-3">
