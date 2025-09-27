@@ -15,7 +15,7 @@ import {
 // Import the CSS for mapbox-gl
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import { argoFloatsData } from "@/data/argoFloats";
+import { argoFloatsData } from "@/data/argoFloats2";
 import type { ArgoFloat, PopupData, TooltipData } from "@/types/argo";
 import Starfield from "../ui/Starfield";
 import FloatPopup from "./FloatPopup";
