@@ -10,6 +10,8 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^2.0.22",
+    "@ai-sdk/react": "^2.0.55",
     "@google/generative-ai": "^0.24.1",
     "@qdrant/js-client-rest": "^1.15.1",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -35,6 +37,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/leaflet": "^1.9.20",
     "@types/mapbox-gl": "^3.4.1",
+    "ai": "^5.0.55",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "d3": "^7.9.0",
@@ -54,8 +57,10 @@
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
     "react-map-gl": "^8.0.4",
+    "react-markdown": "^10.1.0",
     "react-plotly.js": "^2.6.0",
     "recharts": "2.15.4",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.3.1",
     "topojson-client": "^3.1.0",
     "zustand": "^5.0.8"
@@ -63,6 +68,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
     "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",
     "@types/plotly.js": "^3.0.6",
     "@types/react": "^19",

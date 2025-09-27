@@ -2,6 +2,11 @@
 
 import Groq from "groq-sdk";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 
 interface Message {
   id: string;
@@ -136,15 +141,15 @@ export default function ChatInterface({
   const generateFakeCitations = (count: number = 5) => {
     const shuffled = [...availablePdfs].sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, count);
-    
+
     return selected.map((pdf, index) => {
       const cleanTitle = pdf.replace(/_/g, ' ').replace('.pdf', '').replace(/\s+/g, ' ').trim();
       const year = pdf.includes('2023') ? '2023' : pdf.includes('2025') ? '2025' : '2024';
-      
+
       // Generate realistic DOI
       const doiSuffix = Math.random().toString(36).substring(2, 8);
       const doi = `10.1029/${year}OC00${(index + 1).toString().padStart(4, '0')}${doiSuffix}`;
-      
+
       return {
         title: cleanTitle,
         pdf_name: pdf,
@@ -181,16 +186,16 @@ export default function ChatInterface({
 
     try {
       console.log("🔍 Searching vector database for relevant documents...");
-      
+
       // Fake loading delay to simulate vector search
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       console.log("✅ Found relevant documents! Generating response...");
-      
+
       // Generate fake citations from random PDFs
       const fakeCitations = generateFakeCitations(5);
       console.log(`📚 Retrieved ${fakeCitations.length} citations from research database`);
-      
+
       // Convert to Citation format
       const citations: Citation[] = fakeCitations.map((fake, index) => ({
         source: fake.title,
@@ -201,7 +206,7 @@ export default function ChatInterface({
       console.log("🤖 Generating response using retrieved context...");
 
       // Create a prompt that will make Groq naturally include citation numbers
-      const citationTitles = fakeCitations.map((fake, index) => 
+      const citationTitles = fakeCitations.map((fake, index) =>
         `[${index + 1}] ${fake.title}`
       ).join('\n');
 
@@ -253,7 +258,7 @@ Instructions:
         role: "assistant",
         timestamp: new Date(),
       };
-      
+
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -264,7 +269,7 @@ Instructions:
   const createEmbedding = async (text: string): Promise<number[]> => {
     try {
       console.log("Generating Gemini embedding for:", text.substring(0, 50) + "...");
-      
+
       // Use server-side embedding API with Gemini
       const response = await fetch('/api/embeddings', {
         method: 'POST',
@@ -287,10 +292,10 @@ Instructions:
         const errorData = await response.json();
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
-      
+
     } catch (error) {
       console.error("Embedding generation failed:", error);
-      
+
       // Show user-friendly error message
       const errorMessage = error instanceof Error ? error.message : "Unknown embedding error";
       throw new Error(`Cannot generate Gemini embeddings: ${errorMessage}\n\nTo fix this:\n1. Get a Gemini API key from https://makersuite.google.com/app/apikey\n2. Add it to your .env.local as NEXT_PUBLIC_GEMINI_API_KEY\n3. Note: Using Gemini embeddings means your vector database should also use Gemini embeddings for compatibility`);
@@ -319,14 +324,15 @@ Instructions:
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-4 right-4 w-96 h-[calc(100vh-2rem)] flex flex-col bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden z-50">
+    <Card className="fixed top-4 right-4 w-96 h-[calc(100vh-2rem)] flex flex-col bg-black rounded-xl shadow-2xl border border-gray-800 overflow-hidden z-50 p-0">
       {/* Header with Close Button */}
-      <header className="border-b border-gray-700 p-4 bg-gray-800 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-white">FloatChat</h1>
-        <button
-          type="button"
+      <CardHeader className="border-b border-gray-800 p-4 bg-black flex items-center justify-between">
+        <CardTitle className="text-xl font-semibold text-white">FloatChat</CardTitle>
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onClose}
-          className="text-gray-400 hover:text-white transition-colors duration-200 p-1 rounded hover:bg-gray-700"
+          className="text-gray-400 hover:text-white transition-colors duration-200 rounded hover:bg-gray-800"
           aria-label="Close chat"
         >
           <svg
@@ -342,11 +348,11 @@ Instructions:
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
-        </button>
-      </header>
+        </Button>
+      </CardHeader>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto">
+      <ScrollArea className="flex-1">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full p-6">
             <div className="text-center text-gray-400">
@@ -370,18 +376,14 @@ Instructions:
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`py-6 px-4 ${
-                  message.role === "assistant" ? "bg-gray-800" : "bg-gray-900"
-                }`}
+                className={`py-6 px-4 ${message.role === "assistant" ? "bg-black" : "bg-gray-900"}`}
               >
                 <div className="px-4 flex gap-4">
                   <div className="flex-shrink-0">
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                        message.role === "user"
-                          ? "bg-blue-600 text-white"
-                          : "bg-green-600 text-white"
-                      }`}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${message.role === "user"
+                        ? "bg-gray-700 text-white"
+                        : "bg-green-600 text-white"}`}
                     >
                       {message.role === "user" ? "U" : "AI"}
                     </div>
@@ -392,17 +394,18 @@ Instructions:
                         {message.content}
                       </p>
                       {message.citations && message.citations.length > 0 ? (
-                        <div className="mt-4 pt-3 border-t border-gray-600">
+                        <div className="mt-4 pt-3">
+                          <Separator className="bg-gray-800 mb-3" />
                           <h4 className="text-sm font-semibold text-gray-300 mb-2">
                             📚 Research Citations ({message.citations.length}):
                           </h4>
                           <div className="space-y-2">
                             {message.citations.map((citation, index) => (
-                              <div key={index} className="text-xs text-gray-400 bg-gray-700 p-3 rounded-md border border-gray-600">
+                              <Card key={index} className="text-xs text-gray-400 bg-gray-900 p-3 rounded-md border border-gray-800">
                                 <div className="font-medium text-gray-300 mb-2 flex items-center justify-between">
                                   <span>[{index + 1}] {citation.source || `Source ${index + 1}`}</span>
                                   {citation.score !== undefined && (
-                                    <span className="text-xs text-gray-500 bg-gray-600 px-2 py-1 rounded">
+                                    <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded">
                                       Similarity: {citation.score.toFixed(3)}
                                     </span>
                                   )}
@@ -410,12 +413,13 @@ Instructions:
                                 <div className="text-gray-400 leading-relaxed">
                                   {citation.content || "No content available"}
                                 </div>
-                              </div>
+                              </Card>
                             ))}
                           </div>
                         </div>
                       ) : message.role === "assistant" ? (
-                        <div className="mt-4 pt-3 border-t border-gray-600">
+                        <div className="mt-4 pt-3">
+                          <Separator className="bg-gray-800 mb-3" />
                           <div className="text-xs text-gray-500 italic">
                             No sources found in vector database for this query.
                           </div>
@@ -427,7 +431,7 @@ Instructions:
               </div>
             ))}
             {isLoading && (
-              <div className="py-6 px-4 bg-gray-800">
+              <div className="py-6 px-4 bg-black">
                 <div className="px-4 flex gap-4">
                   <div className="flex-shrink-0">
                     <div className="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-sm font-semibold text-white">
@@ -453,46 +457,45 @@ Instructions:
             <div ref={messagesEndRef} />
           </div>
         )}
-      </div>
+      </ScrollArea>
 
       {/* Input Area */}
-      <div className="border-t border-gray-700 p-4 bg-gray-800">
-        <div className="w-full">
-          <form onSubmit={handleSubmit} className="relative">
-            <div className="relative bg-gray-800 rounded-lg border border-gray-600 focus-within:border-gray-500">
-              <textarea
-                ref={textareaRef}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Message FloatChat..."
-                className="w-full bg-transparent text-white placeholder-gray-400 border-0 resize-none focus:outline-none p-4 pr-12 min-h-[56px] max-h-[200px]"
-                rows={1}
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                disabled={!inputValue.trim() || isLoading}
-                className="absolute right-2 bottom-2 p-2 rounded-md bg-white text-black hover:bg-gray-200 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+      <div className="border-t border-gray-800 p-4 bg-black">
+        <form onSubmit={handleSubmit} className="relative">
+          <div className="relative rounded-lg">
+            <Textarea
+              ref={textareaRef}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Message FloatChat..."
+              className="w-full resize-none bg-gray-900 border border-gray-800 focus-visible:ring-green-500/20 focus-visible:border-green-500/50 pr-12 min-h-[56px] max-h-[200px]"
+              rows={1}
+              disabled={isLoading}
+            />
+            <Button
+              type="submit"
+              disabled={!inputValue.trim() || isLoading}
+              className="absolute right-2 bottom-2 p-2 rounded-md bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-800 disabled:text-gray-600"
+              size="icon"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m22 2-7 20-4-9-9-4Z" />
-                  <path d="M22 2 11 13" />
-                </svg>
-              </button>
-            </div>
-          </form>
-        </div>
+                <path d="m22 2-7 20-4-9-9-4Z" />
+                <path d="M22 2 11 13" />
+              </svg>
+            </Button>
+          </div>
+        </form>
       </div>
-    </div>
+    </Card>
   );
 }
