@@ -46,16 +46,16 @@ export default function Home() {
       {/* Main Content */}
       <SidebarInset className="flex flex-col min-h-screen">
         {/* Navigation Bar with Sidebar Trigger */}
-        <header className="flex items-center h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 shrink-0">
+        <header className="relative flex items-center h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 shrink-0 z-50">
           <SidebarTrigger className="mr-4" />
-          <div className="flex-1 h-full flex items-center overflow-hidden">
+          <div className="flex-1 h-full flex items-center">
             <HomeNavbar onOpenChat={handleOpenChat} />
           </div>
         </header>
 
         {/* Main content area - Interactive Map */}
-        <main className="flex-1 w-full h-full overflow-hidden">
-          <div className="w-full h-full">
+        <main className="flex-1 w-full h-full">
+          <div className="w-full h-full overflow-hidden">
             <InteractiveArgoMap />
           </div>
         </main>
