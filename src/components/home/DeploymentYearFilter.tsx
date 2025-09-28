@@ -81,7 +81,7 @@ export function DeploymentYearFilter({
 
   const presets = [
     { label: "All Time", start: MIN_YEAR, end: MAX_YEAR },
-    { label: "Last 5Y", start: MAX_YEAR - 5, end: MAX_YEAR },
+    // { label: "Last 5Y", start: MAX_YEAR - 5, end: MAX_YEAR },
     { label: "Last 10Y", start: MAX_YEAR - 10, end: MAX_YEAR },
     { label: "Early Period", start: MIN_YEAR, end: 2010 },
     { label: "Modern Era", start: 2010, end: MAX_YEAR },

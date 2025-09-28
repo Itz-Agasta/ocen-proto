@@ -3,6 +3,7 @@
 import { AlertCircle } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import TrajectoryDashboard from "@/components/Trajectory/TrajectoryDashboard";
 import TrajectoryMap from "@/components/Trajectory/TrajectoryMap";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -46,7 +47,7 @@ export default function TrajectoryPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-background">
+      <div className="absolute inset-0 flex bg-background">
         {/* Dashboard Skeleton - 70% */}
         <div className="w-[70%] p-6 overflow-y-auto border-r space-y-6">
           <div className="space-y-4">
@@ -96,7 +97,7 @@ export default function TrajectoryPage() {
 
   if (error) {
     return (
-      <div className="flex h-screen bg-background items-center justify-center">
+      <div className="absolute inset-0 flex bg-background items-center justify-center">
         <Card className="w-96">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
@@ -112,7 +113,7 @@ export default function TrajectoryPage() {
 
   if (!trajectory) {
     return (
-      <div className="flex h-screen bg-background items-center justify-center">
+      <div className="absolute inset-0 flex bg-background items-center justify-center">
         <Card className="w-96">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
@@ -126,5 +127,20 @@ export default function TrajectoryPage() {
     );
   }
 
-  return <TrajectoryMap trajectory={trajectory} />;
+  return (
+    <>
+      {/* Use absolute positioning to override the SidebarProvider flex layout */}
+      <div className="absolute inset-0 flex bg-background">
+        {/* Dashboard - 70% */}
+        <div className="w-[70%] p-6 overflow-y-auto border-r">
+          <TrajectoryDashboard trajectory={trajectory} />
+        </div>
+
+        {/* Map - 30% */}
+        <div className="w-[30%] relative">
+          <TrajectoryMap trajectory={trajectory} />
+        </div>
+      </div>
+    </>
+  );
 }

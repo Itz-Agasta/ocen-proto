@@ -16,9 +16,9 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { TimePeriodSelector } from "../TimePeriodSelector";
 import { DatasetFilters } from "./DatasetFilters";
 import { DeploymentYearFilter } from "./DeploymentYearFilter";
-import { TimePeriodFilter } from "./TimeperiodFilter";
 
 interface HomeSidebarProps {
   className?: string;
@@ -46,7 +46,7 @@ export function HomeSidebar({ className, onFiltersChange }: HomeSidebarProps) {
     timePeriod: "all",
     datasets: {
       argoCore: true,
-      argoBGC: true,
+      argoBGC: false,
       argoDeep: false,
       woce: false,
       goShip: false,
@@ -63,11 +63,8 @@ export function HomeSidebar({ className, onFiltersChange }: HomeSidebarProps) {
     onFiltersChange?.(updatedFilters);
   };
 
-  const handleTimePeriodChange = (
-    timePeriod: string,
-    customDateRange?: { start: Date; end: Date },
-  ) => {
-    handleFilterUpdate({ timePeriod, customDateRange });
+  const handleTimePeriodChange = (timePeriod: string) => {
+    handleFilterUpdate({ timePeriod });
   };
 
   const handleDatasetChange = (datasets: HomeSidebarFilters["datasets"]) => {
@@ -106,15 +103,14 @@ export function HomeSidebar({ className, onFiltersChange }: HomeSidebarProps) {
           <div className="space-y-4 px-4">
             {/* Time Period Filter */}
             <SidebarGroup>
-              <SidebarGroupLabel className="flex items-center gap-2">
+              {/* <SidebarGroupLabel className="flex items-center gap-2">
                 <FaCalendarAlt className="h-3.5 w-3.5" />
                 Temporal Range
-              </SidebarGroupLabel>
+              </SidebarGroupLabel> */}
               <SidebarGroupContent>
-                <TimePeriodFilter
+                <TimePeriodSelector
                   value={filters.timePeriod}
-                  customRange={filters.customDateRange}
-                  onTimePeriodChange={handleTimePeriodChange}
+                  onValueChange={(period) => handleTimePeriodChange(period)}
                 />
               </SidebarGroupContent>
             </SidebarGroup>

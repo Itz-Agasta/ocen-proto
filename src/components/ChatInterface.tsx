@@ -1,12 +1,12 @@
 "use client";
-
+/** Legacy File fot backward support */
 import Groq from "groq-sdk";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Message {
   id: string;
@@ -134,7 +134,7 @@ export default function ChatInterface({
     "Trends_and_Variability_in_Earth's_Energy_Imbalance_2024.pdf",
     "Upper-ocean_changes_with_hurricane-strength_wind_e_2024.pdf",
     "Variations_in_the_Central_Mode_Water_in_the_North__2024.pdf",
-    "Weakening_of_the_Atlantic_Meridional_Overturning_C_2024.pdf"
+    "Weakening_of_the_Atlantic_Meridional_Overturning_C_2024.pdf",
   ];
 
   // Generate fake citations from random PDFs
@@ -143,19 +143,27 @@ export default function ChatInterface({
     const selected = shuffled.slice(0, count);
 
     return selected.map((pdf, index) => {
-      const cleanTitle = pdf.replace(/_/g, ' ').replace('.pdf', '').replace(/\s+/g, ' ').trim();
-      const year = pdf.includes('2023') ? '2023' : pdf.includes('2025') ? '2025' : '2024';
+      const cleanTitle = pdf
+        .replace(/_/g, " ")
+        .replace(".pdf", "")
+        .replace(/\s+/g, " ")
+        .trim();
+      const year = pdf.includes("2023")
+        ? "2023"
+        : pdf.includes("2025")
+          ? "2025"
+          : "2024";
 
       // Generate realistic DOI
       const doiSuffix = Math.random().toString(36).substring(2, 8);
-      const doi = `10.1029/${year}OC00${(index + 1).toString().padStart(4, '0')}${doiSuffix}`;
+      const doi = `10.1029/${year}OC00${(index + 1).toString().padStart(4, "0")}${doiSuffix}`;
 
       return {
         title: cleanTitle,
         pdf_name: pdf,
         doi: doi,
         similarity: (0.75 + Math.random() * 0.2).toFixed(3), // Random similarity between 0.75-0.95
-        year: year
+        year: year,
       };
     });
   };
@@ -188,13 +196,15 @@ export default function ChatInterface({
       console.log("🔍 Searching vector database for relevant documents...");
 
       // Fake loading delay to simulate vector search
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       console.log("✅ Found relevant documents! Generating response...");
 
       // Generate fake citations from random PDFs
       const fakeCitations = generateFakeCitations(5);
-      console.log(`📚 Retrieved ${fakeCitations.length} citations from research database`);
+      console.log(
+        `📚 Retrieved ${fakeCitations.length} citations from research database`,
+      );
 
       // Convert to Citation format
       const citations: Citation[] = fakeCitations.map((fake, index) => ({
@@ -206,9 +216,9 @@ export default function ChatInterface({
       console.log("🤖 Generating response using retrieved context...");
 
       // Create a prompt that will make Groq naturally include citation numbers
-      const citationTitles = fakeCitations.map((fake, index) =>
-        `[${index + 1}] ${fake.title}`
-      ).join('\n');
+      const citationTitles = fakeCitations
+        .map((fake, index) => `[${index + 1}] ${fake.title}`)
+        .join("\n");
 
       // Use Groq with instructions to include citation numbers
       const completion = await groq.chat.completions.create({
@@ -226,12 +236,12 @@ Instructions:
 - Include multiple citations per paragraph when relevant
 - Make it seem like you're drawing information from these specific papers
 - Be comprehensive and scientific in your response
-- Don't mention that you're using training data`
+- Don't mention that you're using training data`,
           },
           {
             role: "user",
             content: currentInput,
-          }
+          },
         ],
         model: "llama-3.3-70b-versatile",
         temperature: 0.1,
@@ -240,16 +250,18 @@ Instructions:
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: completion.choices[0]?.message?.content || "No response generated.",
+        content:
+          completion.choices[0]?.message?.content || "No response generated.",
         role: "assistant",
         timestamp: new Date(),
         citations: citations,
       };
 
-      console.log("✅ Response generated with citations from research database");
+      console.log(
+        "✅ Response generated with citations from research database",
+      );
 
       setMessages((prev) => [...prev, assistantMessage]);
-
     } catch (error) {
       console.error("Error:", error);
       const errorMessage: Message = {
@@ -268,37 +280,46 @@ Instructions:
   // Helper function to create embeddings using Gemini's embedding model
   const createEmbedding = async (text: string): Promise<number[]> => {
     try {
-      console.log("Generating Gemini embedding for:", text.substring(0, 50) + "...");
+      console.log(
+        "Generating Gemini embedding for:",
+        text.substring(0, 50) + "...",
+      );
 
       // Use server-side embedding API with Gemini
-      const response = await fetch('/api/embeddings', {
-        method: 'POST',
+      const response = await fetch("/api/embeddings", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text }),
       });
 
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          console.log(`Gemini embedding generated successfully (${data.dimensions} dimensions)`);
+          console.log(
+            `Gemini embedding generated successfully (${data.dimensions} dimensions)`,
+          );
           return data.embedding;
         } else {
           console.error("Embedding API error:", data.error);
-          throw new Error(data.error + (data.suggestion ? ` - ${data.suggestion}` : ''));
+          throw new Error(
+            data.error + (data.suggestion ? ` - ${data.suggestion}` : ""),
+          );
         }
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
-
     } catch (error) {
       console.error("Embedding generation failed:", error);
 
       // Show user-friendly error message
-      const errorMessage = error instanceof Error ? error.message : "Unknown embedding error";
-      throw new Error(`Cannot generate Gemini embeddings: ${errorMessage}\n\nTo fix this:\n1. Get a Gemini API key from https://makersuite.google.com/app/apikey\n2. Add it to your .env.local as NEXT_PUBLIC_GEMINI_API_KEY\n3. Note: Using Gemini embeddings means your vector database should also use Gemini embeddings for compatibility`);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown embedding error";
+      throw new Error(
+        `Cannot generate Gemini embeddings: ${errorMessage}\n\nTo fix this:\n1. Get a Gemini API key from https://makersuite.google.com/app/apikey\n2. Add it to your .env.local as NEXT_PUBLIC_GEMINI_API_KEY\n3. Note: Using Gemini embeddings means your vector database should also use Gemini embeddings for compatibility`,
+      );
     }
   };
 
@@ -327,7 +348,9 @@ Instructions:
     <Card className="fixed top-4 right-4 w-96 h-[calc(100vh-2rem)] flex flex-col bg-black rounded-xl shadow-2xl border border-gray-800 overflow-hidden z-50 p-0">
       {/* Header with Close Button */}
       <CardHeader className="border-b border-gray-800 p-4 bg-black flex items-center justify-between">
-        <CardTitle className="text-xl font-semibold text-white">FloatChat</CardTitle>
+        <CardTitle className="text-xl font-semibold text-white">
+          FloatChat
+        </CardTitle>
         <Button
           variant="ghost"
           size="icon"
@@ -381,9 +404,11 @@ Instructions:
                 <div className="px-4 flex gap-4">
                   <div className="flex-shrink-0">
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${message.role === "user"
-                        ? "bg-gray-700 text-white"
-                        : "bg-green-600 text-white"}`}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                        message.role === "user"
+                          ? "bg-gray-700 text-white"
+                          : "bg-green-600 text-white"
+                      }`}
                     >
                       {message.role === "user" ? "U" : "AI"}
                     </div>
@@ -401,9 +426,15 @@ Instructions:
                           </h4>
                           <div className="space-y-2">
                             {message.citations.map((citation, index) => (
-                              <Card key={index} className="text-xs text-gray-400 bg-gray-900 p-3 rounded-md border border-gray-800">
+                              <Card
+                                key={index}
+                                className="text-xs text-gray-400 bg-gray-900 p-3 rounded-md border border-gray-800"
+                              >
                                 <div className="font-medium text-gray-300 mb-2 flex items-center justify-between">
-                                  <span>[{index + 1}] {citation.source || `Source ${index + 1}`}</span>
+                                  <span>
+                                    [{index + 1}]{" "}
+                                    {citation.source || `Source ${index + 1}`}
+                                  </span>
                                   {citation.score !== undefined && (
                                     <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded">
                                       Similarity: {citation.score.toFixed(3)}

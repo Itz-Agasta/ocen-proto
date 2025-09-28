@@ -123,8 +123,8 @@ export function HomeNavbar({ onOpenChat }: Navbar2Props) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background backdrop-blur-sm">
-      <div className="flex h-16 items-center justify-between px-4 lg:px-6">
+    <nav className="w-full">
+      <div className="flex h-16 items-center justify-between px-2 lg:px-4">
         {/* Left Column: Logo + Brand */}
         <div className="flex items-center space-x-3">
           <Image

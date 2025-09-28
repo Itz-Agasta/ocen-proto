@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import type { FloatTrajectory } from "@/data/mockTrajectoryData";
-import TrajectoryDashboard from "./TrajectoryDashboard";
 import TrajectoryPointHover from "./TrajectoryPointHover";
 
 interface TrajectoryMapProps {
@@ -126,79 +125,69 @@ export default function TrajectoryMap({ trajectory }: TrajectoryMapProps) {
   }, []);
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* Dashboard - 70% */}
-      <div className="w-[70%] p-6 overflow-y-auto border-r">
-        <TrajectoryDashboard trajectory={trajectory} />
-      </div>
+    <MapContainer
+      center={center}
+      bounds={bounds}
+      zoom={6}
+      style={{ height: "100%", width: "100%" }}
+      className="trajectory-map"
+    >
+      <TileLayer
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+        attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+      />
 
-      {/* Map - 30% */}
-      <div className="w-[30%] relative">
-        <MapContainer
-          center={center}
-          bounds={bounds}
-          zoom={6}
-          style={{ height: "100%", width: "100%" }}
-          className="trajectory-map"
-        >
-          <TileLayer
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
-          />
+      {/* Animated Trajectory Line */}
+      {trajectory.points.length > 1 && !animationCompleted && (
+        <AnimatedTrajectory
+          points={trajectory.points}
+          animationDuration={7000}
+          strokeColor="#3b82f6"
+          strokeWidth={3}
+          showProgressMarkers={true}
+          onAnimationComplete={handleAnimationComplete}
+        />
+      )}
 
-          {/* Animated Trajectory Line */}
-          {trajectory.points.length > 1 && !animationCompleted && (
-            <AnimatedTrajectory
-              points={trajectory.points}
-              animationDuration={7000}
-              strokeColor="#3b82f6"
-              strokeWidth={3}
-              showProgressMarkers={true}
-              onAnimationComplete={handleAnimationComplete}
-            />
-          )}
+      {/* Static Trajectory Line (shown after animation) */}
+      {trajectoryPath.length > 1 && showStaticLine && (
+        <Polyline
+          positions={trajectoryPath}
+          color="#3b82f6"
+          weight={3}
+          opacity={0.8}
+        />
+      )}
 
-          {/* Static Trajectory Line (shown after animation) */}
-          {trajectoryPath.length > 1 && showStaticLine && (
-            <Polyline
-              positions={trajectoryPath}
-              color="#3b82f6"
-              weight={3}
-              opacity={0.8}
-            />
-          )}
+      {/* Numbered Trajectory Markers - only shown after animation */}
+      {animationCompleted &&
+        trajectory.points.map((point, index) => {
+          const pointNumber = index + 1;
+          const isStart = index === 0;
+          const isEnd = index === trajectory.points.length - 1;
+          const icon = createNumberedIcon(pointNumber, isStart, isEnd);
 
-          {/* Numbered Trajectory Markers - only shown after animation */}
-          {animationCompleted &&
-            trajectory.points.map((point, index) => {
-              const pointNumber = index + 1;
-              const isStart = index === 0;
-              const isEnd = index === trajectory.points.length - 1;
-              const icon = createNumberedIcon(pointNumber, isStart, isEnd);
+          if (!icon) return null;
 
-              if (!icon) return null;
-
-              return (
-                <Marker
-                  key={`point-${point.timestamp}-${index}`}
-                  position={[point.latitude, point.longitude]}
-                  icon={icon}
-                >
-                  <Tooltip direction="left" offset={[10, 0]} opacity={1}>
-                    <div className="p-0">
-                      <TrajectoryPointHover
-                        point={point}
-                        pointNumber={pointNumber}
-                        isStart={isStart}
-                        isEnd={isEnd}
-                      />
-                    </div>
-                  </Tooltip>
-                </Marker>
-              );
-            })}
-        </MapContainer>
-      </div>
-    </div>
+          return (
+            <Marker
+              key={`point-${point.timestamp}-${index}`}
+              position={[point.latitude, point.longitude]}
+              icon={icon}
+            >
+              <Tooltip direction="left" offset={[10, 0]} opacity={1}>
+                <div className="p-0">
+                  <TrajectoryPointHover
+                    point={point}
+                    pointNumber={pointNumber}
+                    isStart={isStart}
+                    isEnd={isEnd}
+                  />
+                </div>
+              </Tooltip>
+            </Marker>
+          );
+        })}
+    </MapContainer>
   );
 }
