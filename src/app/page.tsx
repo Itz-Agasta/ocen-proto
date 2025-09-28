@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Chat from "@/components/Chat";
-import ChatInterface from "@/components/ChatInterface";
 import { HomeNavbar } from "@/components/home/HomeNavbar";
 import {
   HomeSidebar,
@@ -11,7 +10,7 @@ import InteractiveArgoMap from "@/components/home/InteractiveArgoMap";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function Home() {
-  const [isChatVisible, setIsChatVisible] = useState(true);
+  const [isChatVisible, setIsChatVisible] = useState(false);
   // Filter state for the sidebar (currently for future use when connecting with map filters)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filters, setFilters] = useState<HomeSidebarFilters>({
@@ -62,35 +61,7 @@ export default function Home() {
         </main>
 
         {/* Chat Interface */}
-        <ChatInterface
-          isVisible={isChatVisible}
-          onClose={() => setIsChatVisible(false)}
-        />
         {isChatVisible && <Chat onClose={() => setIsChatVisible(false)} />}
-
-        {/* Chat Toggle Button (when closed) */}
-        {!isChatVisible && (
-          <button
-            type="button"
-            onClick={() => setIsChatVisible(true)}
-            className="fixed bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-colors duration-200 z-50"
-            aria-label="Open chat"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <title>Chat Icon</title>
-              <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path>
-            </svg>
-          </button>
-        )}
       </SidebarInset>
     </>
   );
