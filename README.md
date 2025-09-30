@@ -1,4 +1,5 @@
 # Atlas: Argo Data Visualization Platformt
+<img width="1852" height="1003" alt="atlas_herov2" src="https://github.com/user-attachments/assets/4fa51e46-fbb1-4196-8047-67e049ae394c" />
 
 A comprehensive prototype platform for visualizing Argo float data with integrated AI capabilities, developed for the Indian National Centre for Ocean Information Services (INCOIS), Government of India under SIH.
 
@@ -160,23 +161,6 @@ pnpm format
 pnpm build
 pnpm start
 ```
-
-## Contributing
-
-We welcome contributions from the ocean science community. Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow TypeScript best practices
-- Use Biome for code formatting and linting
-- Write meaningful commit messages
-- Test your changes thoroughly
 
 ## Acknowledgments
 
