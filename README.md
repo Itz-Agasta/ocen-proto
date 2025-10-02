@@ -1,11 +1,15 @@
-# Atlas: Argo Data Visualization Platformt
-<img width="1852" height="1003" alt="atlas_herov2" src="https://github.com/user-attachments/assets/4fa51e46-fbb1-4196-8047-67e049ae394c" />
+# Atlas: Argo Data Visualization Platform
+
+<a href="https://youtu.be/N9W8DbJOrOA" target="_blank">
+  <img width="1852" height="1003" alt="atlas_herov2" 
+       src="https://github.com/user-attachments/assets/4fa51e46-fbb1-4196-8047-67e049ae394c" />
+</a>
 
 A comprehensive prototype platform for visualizing Argo float data with integrated AI capabilities, developed for the Indian National Centre for Ocean Information Services (INCOIS), Government of India under SIH.
 
 ## About INCOIS
 
-The Indian National Centre for Ocean Information Services (INCOIS) is an autonomous organization under the Ministry of Earth Sciences, Government of India. INCOIS provides ocean information and advisory services to support the blue economy, sustainable development, and marine safety.
+The Indian National Centre for Ocean Information Services [(INCOIS)](https://incois.gov.in/site/index.jsp) is an autonomous organization under the Ministry of Earth Sciences, Government of India. INCOIS provides ocean information and advisory services to support the blue economy, sustainable development, and marine safety.
 
 ## Features
 
@@ -44,6 +48,8 @@ The Indian National Centre for Ocean Information Services (INCOIS) is an autonom
 - **D3.js**: Data-driven document manipulation
 - **Recharts & Plotly**: Advanced charting libraries
 - **React-Leaflet**: React integration for Leaflet maps
+  
+<img width="2321" height="1612" alt="ocen v2_crop" src="https://github.com/user-attachments/assets/04eebd8e-7838-42c1-b794-39bdcc873484" />
 
 ### AI & Data Processing
 
